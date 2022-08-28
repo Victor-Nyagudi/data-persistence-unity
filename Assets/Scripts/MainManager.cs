@@ -14,7 +14,7 @@ using UnityEngine.UI;
 
 public class MainManager : MonoBehaviour
 {
-    static readonly MainManager _instance = new MainManager();
+    static readonly MainManager _instance;
 
     public static MainManager Instance { get => _instance; }
 
@@ -33,6 +33,13 @@ public class MainManager : MonoBehaviour
 
     void Awake()
     {
+        if (Instance != null)
+        {
+            Destroy(gameObject);
+
+            return;
+        }
+
         DontDestroyOnLoad(gameObject);
 
         LoadScore();
@@ -57,8 +64,6 @@ public class MainManager : MonoBehaviour
 
         _hudText.GetComponent<Text>().text =
             $"Name: {GameManager.Instance.PlayerName} - Best Score: 0";
-
-        m_Points = MainManager.Instance.m_Points;
     }
 
     void Update()
@@ -80,8 +85,6 @@ public class MainManager : MonoBehaviour
         {
             if (Input.GetKeyDown(KeyCode.Space))
             {
-                MainManager.Instance.SaveScore();
-
                 SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
             }
         }
