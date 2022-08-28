@@ -18,8 +18,9 @@ public class StartButton : MonoBehaviour
 
     void StartGame() 
     {
+        GameManager.Instance.PlayerName = 
+            GameObject.Find("Name Input Field").GetComponent<TMP_InputField>().text;
+
         SceneManager.LoadScene(1);
-
-
     }
 }

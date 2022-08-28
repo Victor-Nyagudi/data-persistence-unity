@@ -7,20 +7,14 @@ public class GameManager : MonoBehaviour
 {
     static readonly GameManager _instance = new GameManager();
 
-    public GameManager Instance { get => _instance; }
+    public static GameManager Instance { get => _instance; }
 
-    [SerializeField]
-    TextMeshProUGUI _playerName;
+    public string PlayerName { get; set; }
 
     void Awake() => DontDestroyOnLoad(gameObject);
 
     void Start()
     {
            
-    }
-
-    void Update()
-    {
-        
     }
 }
