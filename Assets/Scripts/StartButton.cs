@@ -1,18 +1,25 @@
-using System.Collections;
-using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class StartButton : MonoBehaviour
 {
-    // Start is called before the first frame update
+    [SerializeField]
+    Button _startButton;
+
+    [SerializeField]
+    TextMeshProUGUI _playerName;
+
     void Start()
     {
-        
+        _startButton.onClick.AddListener(StartGame);
     }
 
-    // Update is called once per frame
-    void Update()
+    void StartGame() 
     {
-        
+        SceneManager.LoadScene(1);
+
+
     }
 }

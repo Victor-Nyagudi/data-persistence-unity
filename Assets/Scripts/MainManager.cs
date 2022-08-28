@@ -1,6 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
+
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -19,7 +24,6 @@ public class MainManager : MonoBehaviour
 
     bool m_GameOver = false;
 
-    
     void Start()
     {
         const float step = 0.6f;
@@ -72,5 +76,21 @@ public class MainManager : MonoBehaviour
     {
         m_GameOver = true;
         _gameOverText.SetActive(true);
+    }
+
+    public void StartGame()
+    {
+        SceneManager.LoadScene(1);
+    }
+
+    public void QuitGame()
+    {
+#if UNITY_EDITOR
+        EditorApplication.ExitPlaymode();
+
+#else
+        Application.Quit();
+
+#endif
     }
 }
