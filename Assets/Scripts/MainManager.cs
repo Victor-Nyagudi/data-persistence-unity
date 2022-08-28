@@ -1,3 +1,5 @@
+using System;
+using System.IO;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -12,17 +14,29 @@ using UnityEngine.UI;
 
 public class MainManager : MonoBehaviour
 {
+    static readonly MainManager _instance = new MainManager();
+
+    public static MainManager Instance { get => _instance; }
+
+
     public Brick _brickPrefab;
     public int _lineCount = 6;
     public Rigidbody _ball;
 
     public Text _scoreText;
-    public GameObject _gameOverText;
+    public GameObject _gameOverText, _hudText;
     
     bool m_Started = false;
     int m_Points;
 
     bool m_GameOver = false;
+
+    void Awake()
+    {
+        DontDestroyOnLoad(gameObject);
+
+        LoadScore();
+    }
 
     void Start()
     {
@@ -40,6 +54,11 @@ public class MainManager : MonoBehaviour
                 brick.onDestroyed.AddListener(AddPoint);
             }
         }
+
+        _hudText.GetComponent<Text>().text =
+            $"Name: {GameManager.Instance.PlayerName} - Best Score: 0";
+
+        m_Points = MainManager.Instance.m_Points;
     }
 
     void Update()
@@ -49,7 +68,7 @@ public class MainManager : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.Space))
             {
                 m_Started = true;
-                float randomDirection = Random.Range(-1.0f, 1.0f);
+                float randomDirection = UnityEngine.Random.Range(-1.0f, 1.0f);
                 Vector3 forceDir = new Vector3(randomDirection, 1, 0);
                 forceDir.Normalize();
 
@@ -61,6 +80,8 @@ public class MainManager : MonoBehaviour
         {
             if (Input.GetKeyDown(KeyCode.Space))
             {
+                MainManager.Instance.SaveScore();
+
                 SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
             }
         }
@@ -90,7 +111,37 @@ public class MainManager : MonoBehaviour
 
 #else
         Application.Quit();
-
 #endif
+    }
+
+    [Serializable]
+    class SaveData
+    {
+        public int Score { get; set; }
+    }
+
+    public void SaveScore()
+    {
+        var data = new SaveData();
+
+        data.Score = m_Points;
+
+        string json = JsonUtility.ToJson(data);
+
+        File.WriteAllText($"{Application.persistentDataPath}/savefile.json", json);
+    }
+
+    public void LoadScore()
+    {
+        var path = $"{Application.persistentDataPath}/savefile.json";
+
+        if (File.Exists(path))
+        {
+            string json = File.ReadAllText(path);
+
+            SaveData data = JsonUtility.FromJson<SaveData>(json);
+
+            m_Points = data.Score;
+        }
     }
 }
